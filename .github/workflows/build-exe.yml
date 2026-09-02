@@ -1,0 +1,33 @@
+name: Build Prod_Manager.exe
+
+# Runs automatically whenever you push code to GitHub, and can also be
+# triggered manually from the "Actions" tab with the "Run workflow" button.
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build portable .exe with PyInstaller
+        run: pyinstaller --onefile --windowed --name Prod_Manager --icon=icon.ico main.py
+
+      - name: Upload Prod_Manager.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: Prod_Manager-windows-exe
+          path: dist/Prod_Manager.exe
